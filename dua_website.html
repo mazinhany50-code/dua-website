@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>دُعاء — مكتبة الأدعية والأذكار</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#f7f8f5;color:#173b32}
+header{background:linear-gradient(135deg,#0d4b3f,#1d7562);color:white;padding:34px 18px 28px;text-align:center}
+h1{margin:0 0 8px;font-size:34px}header p{margin:0;opacity:.9}
+.wrap{max-width:1050px;margin:auto;padding:20px}
+.search{width:100%;padding:15px 18px;border:1px solid #d8e1dc;border-radius:16px;font-size:16px;outline:none;background:white;box-shadow:0 3px 15px #173b3210}
+.categories{display:flex;gap:9px;flex-wrap:wrap;margin:18px 0}
+.cat{border:0;border-radius:999px;padding:10px 15px;background:#e4eee9;color:#174d41;cursor:pointer;font-size:14px}
+.cat.active,.cat:hover{background:#176653;color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:15px}
+.card{background:white;border:1px solid #e0e8e3;border-radius:18px;padding:19px;box-shadow:0 4px 18px #173b3209}
+.card h3{margin:0 0 13px;color:#12604f;font-size:18px}
+.text{line-height:2.05;font-size:17px;color:#263b35}
+.actions{display:flex;gap:8px;margin-top:15px}
+button.action{border:1px solid #d6e3dd;background:#f6faf8;color:#175847;border-radius:10px;padding:8px 12px;cursor:pointer}
+button.action:hover{background:#e8f2ed}
+.count{text-align:center;color:#6c7d76;margin:22px 0}
+footer{text-align:center;padding:28px;color:#71817b;font-size:13px}
+.empty{text-align:center;padding:45px;color:#71817b;grid-column:1/-1}
+</style>
+</head>
+<body>
+<header>
+<h1>🤲 دُعاء</h1>
+<p>مكتبة من الأدعية والأذكار لكل وقت وحال</p>
+</header>
+<main class="wrap">
+<input id="search" class="search" placeholder="🔎 ابحث عن دعاء...">
+<div id="cats" class="categories"></div>
+<div id="count" class="count"></div>
+<section id="grid" class="grid"></section>
+</main>
+<footer>اللهم اجعل هذا الموقع نافعًا لكل من يقرأ دعاءً فيه 🤍</footer>
+
+<script>
+const data=[
+["عام","رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ."],
+["عام","اللَّهُمَّ اغْفِرْ لِي وَارْحَمْنِي وَاهْدِنِي وَعَافِنِي وَارْزُقْنِي."],
+["عام","رَبِّ اغْفِرْ لِي وَلِوَالِدَيَّ وَلِلْمُؤْمِنِينَ يَوْمَ يَقُومُ الْحِسَابُ."],
+["توفيق","رَبِّ اشْرَحْ لِي صَدْرِي ۝ وَيَسِّرْ لِي أَمْرِي ۝ وَاحْلُلْ عُقْدَةً مِنْ لِسَانِي ۝ يَفْقَهُوا قَوْلِي."],
+["توفيق","رَبِّ زِدْنِي عِلْمًا."],
+["توفيق","اللَّهُمَّ لَا سَهْلَ إِلَّا مَا جَعَلْتَهُ سَهْلًا، وَأَنْتَ تَجْعَلُ الْحَزْنَ إِذَا شِئْتَ سَهْلًا."],
+["الميت","اللَّهُمَّ اغْفِرْ لَهُ وَارْحَمْهُ، وَعَافِهِ وَاعْفُ عَنْهُ، وَأَكْرِمْ نُزُلَهُ وَوَسِّعْ مُدْخَلَهُ."],
+["الميت","اللَّهُمَّ نَوِّرْ قَبْرَهُ، وَآنِسْ وَحْشَتَهُ، وَارْحَمْ غُرْبَتَهُ، وَاجْعَلْ قَبْرَهُ رَوْضَةً مِنْ رِيَاضِ الْجَنَّةِ."],
+["الميت","اللَّهُمَّ اجْعَلْهُ مِنْ أَهْلِ الْجَنَّةِ، وَاجْمَعْنَا بِهِ فِي دَارِ كَرَامَتِكَ."],
+["رزق","رَبِّ إِنِّي لِمَا أَنْزَلْتَ إِلَيَّ مِنْ خَيْرٍ فَقِيرٌ."],
+["رزق","اللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ، وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ."],
+["شفاء","اللَّهُمَّ رَبَّ النَّاسِ، أَذْهِبِ الْبَأْسَ، اشْفِ أَنْتَ الشَّافِي، لَا شِفَاءَ إِلَّا شِفَاؤُكَ."],
+["شفاء","أَسْأَلُ اللَّهَ الْعَظِيمَ رَبَّ الْعَرْشِ الْعَظِيمِ أَنْ يَشْفِيَكَ."],
+["هم وحزن","اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَأَعُوذُ بِكَ مِنَ الْعَجْزِ وَالْكَسَلِ."],
+["هم وحزن","لَا إِلَهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ."],
+["الوالدان","رَبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا."],
+["الوالدان","اللَّهُمَّ احْفَظْ وَالِدَيَّ، وَبَارِكْ لَهُمَا فِي أَعْمَارِهِمَا، وَاجْزِهِمَا عَنِّي خَيْرَ الْجَزَاءِ."],
+["طمأنينة","أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ."],
+["طمأنينة","اللَّهُمَّ أَنْزِلْ عَلَى قَلْبِي سَكِينَتَكَ، وَاملَأْهُ بِالطُّمَأْنِينَةِ وَالرِّضَا."],
+["سفر","سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ ۝ وَإِنَّا إِلَى رَبِّنَا لَمُنقَلِبُونَ."],
+["مطر","اللَّهُمَّ صَيِّبًا نَافِعًا."],
+["أذكار","سُبْحَانَ اللَّهِ وَبِحَمْدِهِ."],
+["أذكار","أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ."],
+["زواج","رَبَّنَا هَبْ لَنَا مِنْ أَزْوَاجِنَا وَذُرِّيَّاتِنَا قُرَّةَ أَعْيُنٍ وَاجْعَلْنَا لِلْمُتَّقِينَ إِمَامًا."]
+];
+const cats=["الكل",...new Set(data.map(x=>x[0]))];
+let active="الكل";
+const grid=document.getElementById("grid"), search=document.getElementById("search");
+function renderCats(){document.getElementById("cats").innerHTML=cats.map(c=>`<button class="cat ${c===active?"active":""}" onclick="setCat('${c}')">${c}</button>`).join("")}
+function render(){
+ const q=search.value.trim().toLowerCase();
+ const items=data.filter(x=>(active==="الكل"||x[0]===active)&&(!q||x[1].toLowerCase().includes(q)||x[0].toLowerCase().includes(q)));
+ document.getElementById("count").textContent=`${items.length} دعاء`;
+ grid.innerHTML=items.length?items.map((x,i)=>`<article class="card"><h3>${x[0]}</h3><div class="text">${x[1]}</div><div class="actions"><button class="action" onclick="copyText(${data.indexOf(x)})">📋 نسخ</button><button class="action" onclick="shareText(${data.indexOf(x)})">↗ مشاركة</button></div></article>`).join(""):`<div class="empty">لم نجد دعاءً مطابقًا للبحث.</div>`;
+}
+function setCat(c){active=c;renderCats();render()}
+function copyText(i){navigator.clipboard?.writeText(data[i][1]); alert("تم نسخ الدعاء 🤍")}
+async function shareText(i){const t=data[i][1];if(navigator.share) await navigator.share({title:"دعاء",text:t});else{navigator.clipboard?.writeText(t);alert("تم نسخ الدعاء للمشاركة 🤍")}}
+search.addEventListener("input",render);
+renderCats();render();
+</script>
+</body>
+</html>
